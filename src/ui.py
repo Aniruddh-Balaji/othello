@@ -1,12 +1,24 @@
+# Covers the GUI using TKinter
+
+
 from tkinter import *
 
+# Number of Black pieces, white pieces, `r` is the current color in play
 nb, nw, r = 2, 2, 1
+
+# A mapping from the simplified coordinates to the actual coordinates of the center points of each cell.
+# Eg: (0, 0): (273.5, 109.2) - Not exact values
 d = {}
+# A mapping from the simplified coordinates to the actual coordinates of the diagonal points of each cell.
 d1 = {}
+# A mapping relating the Buttons and the cells.
 d2 = {}
 
 
 def welcome_screen():
+    """
+    Creates the initial welcome screen
+    """
     global welcome_window
     welcome_window = Tk(className="Othello", screenName="Othello")
     welcome_canvas = Canvas(welcome_window, bg="teal", width=6000, height=6000)
@@ -29,13 +41,16 @@ def welcome_screen():
         fg="teal",
         width=40,
         height=5,
-        command=lambda: on_button_destroy1(welcome_window, win_player_names),
+        command=lambda: change_windows(welcome_window, win_player_names),
         font=300,
     )
     start_button.pack()
 
 
 def win_player_names():
+    """
+    Creates a second window to take input from user about the player's names.
+    """
     global player1_name, player2_name
     win_player_names = Tk(className="Enter your names.")
     win_player_names.geometry("50000x30000")
@@ -60,14 +75,17 @@ def win_player_names():
         fg="teal",
         width=40,
         height=5,
-        command=lambda: on_button_destroy(win_player_names, starting_pos),
+        command=lambda: get_player_names(win_player_names, starting_pos),
         font=40,
     )
     start_button.place(x=550, y=300)
 
 
 def create_board():
-    global s
+    """
+    Creates the board
+    """
+    global valid_moves
     global d, d1
     global game_canvas
     global win_game
@@ -103,19 +121,25 @@ def create_board():
 
 
 def starting_pos():
+    """
+    Sets up the initial position of the board.
+    """
     global d
     global d1
-    global s
-    s = {(2, 3), (3, 2), (4, 5), (5, 4)}
+    global valid_moves
+    valid_moves = {(2, 3), (3, 2), (4, 5), (5, 4)}
     create_board()
     put_coin(3, 3, 2, d)
     put_coin(3, 4, 1, d)
     put_coin(4, 4, 2, d)
     put_coin(4, 3, 1, d)
-    check_val(s, d1)
+    place_buttons(valid_moves, d1)
 
 
 def put_coin(i, j, r, d):
+    """
+    Puts the coin with color `r` at location `(i, j)`.
+    """
     global game_canvas
     global win_game
     x = d[(i, j)][0]
@@ -132,7 +156,10 @@ def put_coin(i, j, r, d):
         )
 
 
-def check_val(s, d1):
+def place_buttons(s, d1):
+    """
+    Goes through the set `s` of valid moves and places clickable buttons at those places.
+    """
     global d2
     global win_game
     for i in s:
@@ -141,12 +168,15 @@ def check_val(s, d1):
             width=5,
             height=2,
             bg="lightgreen",
-            command=lambda ci=i, rr=r: on_button_click(ci, rr),
+            command=lambda ci=i, rr=r: destroy_buttons(ci, rr),
         )
         d2[i].place(x=d1[i][0] - 20, y=d1[i][1] - 20)
 
 
 def win_display(x):
+    """
+    Displays the window to show the winner.
+    """
     global win_game
     win_game.destroy()
     winner_display = Tk(className="Winner")
@@ -172,15 +202,20 @@ def win_display(x):
         ).place(x=0, y=0)
 
 
-welcome_screen()
-
-
-def on_button_click(i, r):
+def destroy_buttons(i, r):
+    """
+    Destroys all buttons when a button is chosen
+    """
+    # TODO
     for j in d2:
         d2[j].destroy()
 
 
-def on_button_destroy(win1, win2):
+def get_player_names(win1, win2):
+    """
+    Gets the player's names. If not inputted, set defaults.
+    Also destroys `win1` and opens `win2`
+    """
     global player1, player2
     player1 = player1_name.get()
     player2 = player2_name.get()
@@ -192,12 +227,15 @@ def on_button_destroy(win1, win2):
     win2()
 
 
-def on_button_destroy1(win1, win2):
+def change_windows(win1, win2):
+    """
+    Destroys `win1` and calls `win2`
+    """
     win1.destroy()
     win2()
 
 
-# win_display(1)
+welcome_screen()
 
 
 """def undo(file):

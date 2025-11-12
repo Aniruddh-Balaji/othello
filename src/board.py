@@ -1,20 +1,26 @@
 def readsave():
+    """
+    Reads the text file `save.txt` and returns the state
+    """
     a = []
     with open("save.txt", "r") as file:
         lines = file.readlines()[2:12]
         a.append(int(lines[0].strip()))
         for line in lines[2:10]:
-            l = line.strip()
-            a.append(list(map(int, l.split())))
+            state = line.strip()
+            a.append(list(map(int, state.split())))
     return a
 
 
-def writesave(l, c):
+def writesave(state, color):
+    """
+    Overwrites the `state` to `save.txt`
+    """
     with open("save.txt", "r") as file:
         lines = file.readlines()[0:4]
 
-    lines[2] = str(c) + "\n"
-    for i in l:
+    lines[2] = str(color) + "\n"
+    for i in state:
         s = " ".join(map(str, i)) + "\n"
         lines.append(s)
 
@@ -23,7 +29,10 @@ def writesave(l, c):
 
 
 def resetsave():
-    l = [
+    """
+    Initializes the state.
+    """
+    state = [
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -33,9 +42,4 @@ def resetsave():
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    writesave(l, 1)
-
-
-# resetsave()
-# print(*readsave(), sep='\n')
-# writesave(readsave()[1:9], 1)
+    writesave(state, 1)
