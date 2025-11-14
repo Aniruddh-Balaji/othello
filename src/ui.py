@@ -20,10 +20,10 @@ def welcome_screen():
     Creates the initial welcome screen
     """
     global welcome_window
-    welcome_window = Tk(className="Othello", screenName="Othello")
+    welcome_window = Tk(className="Othello")
     welcome_canvas = Canvas(welcome_window, bg="teal", width=6000, height=6000)
-    welcome_window.geometry("50000x30000")
-    welcome_canvas.place(x=0, y=0)
+    welcome_window.geometry("800x500")
+    welcome_canvas.place(x=0,y=0)
     welcome_label = Label(
         welcome_window,
         fg="lightpink",
@@ -31,7 +31,7 @@ def welcome_screen():
         width=40,
         height=3,
         bg="teal",
-        text="WELCOME TO OTHELLO!!!",
+        text="WELCOME TO OTHELLO!!!",padx=0,pady=0
     )
     welcome_label.pack()
     start_button = Button(
@@ -42,9 +42,10 @@ def welcome_screen():
         width=40,
         height=5,
         command=lambda: change_windows(welcome_window, win_player_names),
-        font=300,
+        font=300,padx=0,pady=0
     )
     start_button.pack()
+    welcome_window.mainloop()
 
 
 def win_player_names():
@@ -53,32 +54,34 @@ def win_player_names():
     """
     global player1_name, player2_name
     win_player_names = Tk(className="Enter your names.")
-    win_player_names.geometry("50000x30000")
+    win_player_names.geometry("400x300")
     win_names_canvas = Canvas(win_player_names, bg="teal", width=15000, height=15000)
     win_names_canvas.place(x=0, y=0)
     player1_ask = Label(
         win_player_names, text="Player1", fg="black", bg="pink", font="bold", width=10
+        ,padx=1,pady=1
     )
     player2_ask = Label(
         win_player_names, text="Player2", fg="black", bg="pink", font="bold", width=10
+        ,padx=1,pady=1
     )
-    player1_ask.place(x=500, y=177)
-    player2_ask.place(x=800, y=177)
     player1_name = Entry(win_player_names, width=30)
     player2_name = Entry(win_player_names, width=30)
-    player1_name.place(x=537, y=203)
-    player2_name.place(x=837, y=203)
+    player1_ask.grid(row=0,column=0)
+    player1_name.grid(row=0,column=1)
+    player2_ask.grid(row=1,column=0)
+    player2_name.grid(row=1,column=1)
     start_button = Button(
         win_player_names,
         bg="pink",
         text="StartGame",
         fg="teal",
-        width=40,
+        width=30,
         height=5,
         command=lambda: get_player_names(win_player_names, starting_pos),
-        font=40,
+        font=40,padx=0,pady=0
     )
-    start_button.place(x=550, y=300)
+    start_button.place(y=100)
 
 
 def create_board():
@@ -91,33 +94,34 @@ def create_board():
     global win_game
     global player1, player2
     win_game = Tk(className="Othello")
-    win_game.geometry("50000x30000")
+    win_game.geometry("420x550")
     game_canvas = Canvas(win_game, width=4000, height=6000, bg="teal")
     game_canvas.place(x=0, y=0)
     for i in range(64):
         h = i % 8
         w = i // 8
         game_canvas.create_rectangle(
-            550 + 50 * h,
-            100 + 50 * w,
-            550 + 50 * (h + 1),
-            100 + 50 * (w + 1),
+            10+50 * h,
+            100+50 * w,
+            10+50 * (h + 1),
+            100+50 * (w + 1),
             fill="darkgreen",
             outline="black",
-            width=2,
+            width=2
         )
-        d1[(h, w)] = (575 + 50 * w, 125 + 50 * h)
-        d[(w, h)] = (550 + 50 * h, 100 + 50 * w, 550 + 50 * (h + 1), 100 + 50 * (w + 1))
+        d1[(h, w)] = (35 + 50 * h,125+50 * w)
+        d[(h,w)] = (10+50 * h, 100 + 50 * w, 10+50 *(h + 1), 100 + 50 * (w + 1))
     welcome_disp = Label(
         win_game, text="Welcome To Othello!!!", bg="lightpink", fg="black", font="bold"
+        ,padx=0,pady=0
     )
-    welcome_disp.place(x=650, y=0)
-    nb_pieces = Label(win_game, text=player1 + ": " + str(nb))
-    nw_pieces = Label(win_game, text=player2 + ": " + str(nw))
-    nb_pieces.place(x=650, y=30)
-    nw_pieces.place(x=790, y=30)
-    undo = Button(win_game, text="undo", fg="pink", bg="teal")
-    undo.place(x=1, y=1)
+    welcome_disp.pack()
+    nb_pieces = Label(win_game, text=player1 + ":: " + str(nb))
+    nw_pieces = Label(win_game, text=player2 + ":: " + str(nw))
+    nb_pieces.pack()
+    nw_pieces.pack()
+    """undo = Button(win_game, text="undo", fg="pink", bg="teal")
+    undo.place(x=1, y=1)"""
 
 
 def starting_pos():
@@ -165,9 +169,11 @@ def place_buttons(s, d1):
     for i in s:
         d2[i] = Button(
             win_game,
-            width=5,
+            width=4,
             height=2,
             bg="lightgreen",
+            padx = 0,
+            pady = 0,
             command=lambda ci=i, rr=r: destroy_buttons(ci, rr),
         )
         d2[i].place(x=d1[i][0] - 20, y=d1[i][1] - 20)
