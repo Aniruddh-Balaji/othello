@@ -6,9 +6,9 @@ print()
 if sum(count(readsave()[1:10])) == 64:
     resetsave()
 else:
-	s = input("Retrieve previous game(y/n)? ")
-	if s.lower() == 'n':
-		resetsave()
+    s = input("Retrieve previous game(y/n)? ")
+    if s.lower() == "n":
+        resetsave()
 
 state = readsave()[1:10]
 colour = readsave()[0]
