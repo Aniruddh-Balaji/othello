@@ -4,8 +4,8 @@
 from tkinter import *
 
 # Number of Black pieces, white pieces, `r` is the current color in play
-nb, nw, r = 2, 2, 1
-
+nb, nw= 2, 2
+r=1
 # A mapping from the simplified coordinates to the actual coordinates of the center points of each cell.
 # Eg: (0, 0): (273.5, 109.2) - Not exact values
 d = {}
@@ -41,13 +41,11 @@ def welcome_screen():
         fg="teal",
         width=40,
         height=5,
-        command=lambda: change_windows(welcome_window, win_player_names),
+        command=lambda: change_windows(welcome_window),
         font=300,padx=0,pady=0
     )
     start_button.pack()
     welcome_window.mainloop()
-
-
 def win_player_names():
     """
     Creates a second window to take input from user about the player's names.
@@ -78,11 +76,11 @@ def win_player_names():
         fg="teal",
         width=30,
         height=5,
-        command=lambda: get_player_names(win_player_names, starting_pos),
+        command=lambda: get_player_names(win_player_names),
         font=40,padx=0,pady=0
     )
     start_button.place(y=100)
-
+    win_player_names.mainloop()
 
 def create_board():
     """
@@ -109,15 +107,15 @@ def create_board():
             outline="black",
             width=2
         )
-        d1[(h, w)] = (35 + 50 * h,125+50 * w)
-        d[(h,w)] = (10+50 * h, 100 + 50 * w, 10+50 *(h + 1), 100 + 50 * (w + 1))
+        d1[(w,h)] = (35 + 50 * h,125+50 * w)
+        d[(w,h)] = (10+50 * h, 100 + 50 * w, 10+50 *(h + 1), 100 + 50 * (w + 1))
     welcome_disp = Label(
         win_game, text="Welcome To Othello!!!", bg="lightpink", fg="black", font="bold"
         ,padx=0,pady=0
     )
     welcome_disp.pack()
-    nb_pieces = Label(win_game, text=player1 + ":: " + str(nb))
-    nw_pieces = Label(win_game, text=player2 + ":: " + str(nw))
+    nb_pieces = Label(win_game, text=player1+":: " + str(nb))
+    nw_pieces = Label(win_game, text=player2+":: " + str(nw))
     nb_pieces.pack()
     nw_pieces.pack()
     """undo = Button(win_game, text="undo", fg="pink", bg="teal")
@@ -133,7 +131,7 @@ def starting_pos():
     global valid_moves
     valid_moves = {(2, 3), (3, 2), (4, 5), (5, 4)}
     create_board()
-    put_coin(3, 3, 2, d)
+    put_coin(3,3, 2, d)
     put_coin(3, 4, 1, d)
     put_coin(4, 4, 2, d)
     put_coin(4, 3, 1, d)
@@ -166,58 +164,27 @@ def place_buttons(s, d1):
     """
     global d2
     global win_game
+    global i
     for i in s:
         d2[i] = Button(
             win_game,
-            width=4,
+            width=5,
             height=2,
             bg="lightgreen",
-            padx = 0,
-            pady = 0,
             command=lambda ci=i, rr=r: destroy_buttons(ci, rr),
         )
         d2[i].place(x=d1[i][0] - 20, y=d1[i][1] - 20)
 
-
-def win_display(x):
-    """
-    Displays the window to show the winner.
-    """
-    global win_game
-    win_game.destroy()
-    winner_display = Tk(className="Winner")
-    if x == 1:
-        Label(
-            winner_display,
-            text=player1 + " wins!!!",
-            fg="lightpink",
-            bg="teal",
-            font=("Algerian", 40, "bold"),
-            width=50,
-            height=18,
-        ).place(x=0, y=0)
-    if x == 2:
-        Label(
-            winner_display,
-            text=player2 + " wins!!!",
-            fg="lightpink",
-            bg="teal",
-            font=("Times New Roman", 40, "bold"),
-            width=50,
-            height=18,
-        ).place(x=0, y=0)
-
-
-def destroy_buttons(i, r):
+def destroy_buttons(x,r):
     """
     Destroys all buttons when a button is chosen
     """
     # TODO
     for j in d2:
         d2[j].destroy()
-
-
-def get_player_names(win1, win2):
+def f():
+    return i
+def get_player_names(win1):
     """
     Gets the player's names. If not inputted, set defaults.
     Also destroys `win1` and opens `win2`
@@ -230,26 +197,14 @@ def get_player_names(win1, win2):
     if player2 == "":
         player2 = "PLAYER2"
     win1.destroy()
-    win2()
 
 
-def change_windows(win1, win2):
+def change_windows(win1):
     """
     Destroys `win1` and calls `win2`
     """
     win1.destroy()
-    win2()
-
-
-welcome_screen()
-
-
-"""def undo(file):
-    f=open(file,r)
-    f.seek()
-    f.readlines(8)"""
-
-
-"""for i in range(8):
-    for j in range(8):
-        put_coin(i,j,l[i][j],d)"""
+def make_board(l):
+    for i in range(8):
+        for j in range(8):
+            put_coin(i,j,l[i][j],d)
