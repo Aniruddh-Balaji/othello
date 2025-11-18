@@ -32,5 +32,5 @@ while code:
         x, y = map(int, input("Enter valid x, y values: ").split())
         if (x, y) in m:
             state = moves(state, colour, x, y)
-            writesave(state, colour)
             colour = 3 - colour
+            writesave(state, colour)
