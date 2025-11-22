@@ -5,20 +5,20 @@ We have taken an entirely function-based approach to this project; we don't use 
 
 The filesystem is split as:
 ```
- .
-├──  .git
+.
+├── .git
 │   ├── 
 │   └── (truncated)
-├── 󰊢 .gitignore
-├──  ARCHITECTURE.md
-├──  LICENSE
-├── 󰂺 README.md
-└── 󰣞 src
-    ├──  board.py
-    ├──  game_logic.py
-    ├──  main.py
-    ├──  save.txt
-    └──  ui.py
+├── .gitignore
+├── ARCHITECTURE.md
+├── LICENSE
+├── README.md
+└── src
+    ├── board.py
+    ├── game_logic.py
+    ├── main.py
+    ├── save.txt
+    └── ui.py
 
 ```
 (This is the output of `tree .` from the root of this project.)
@@ -54,14 +54,14 @@ Here, I'll outline a couple important variables that are used throughout the pro
 ## Functions
 Here, I'll go over the functions in each module(file).
 
-#### `board.py`
+### `board.py`
 - `readsave()`: This function reads the save file `save.txt` and returns the state as a 2D list.
 - `writesave(state, color)`: This function overwrites the save file with the current state `state`
   and maintains the `color`(i.e. whose chance is it next?) in the `save.txt` file.
 - `resetsave()`: This function just sets the initial state of the game and writes it into `save.txt`
   using `writesave(..)`.
 
-#### `game_logic.py`
+### `game_logic.py`
 - `rowcheck(row, color)`: Takes a list `row` and the color `color` and returns the indices of all
   valid moves within that list. Since we are accepting lists in general, this is used for rows,
   columns and all diagonals to check(even though the name is _rowcheck_).
