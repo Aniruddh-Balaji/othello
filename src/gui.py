@@ -50,7 +50,7 @@ def welcome_screen():
 
 
 def open_names_window():
-    """Open the Toplevel to enter player names. Destroy welcome root."""
+    """Open the Tkinter to enter player names. Destroy welcome root."""
     global root, win_names
     if root:
         root.destroy()
@@ -91,8 +91,6 @@ def initialize_game():
     """Prepare game state from save, create board and show starting position."""
     global state, colour, win_game
 
-    resetsave()
-
     r = readsave()
     state = r[1:9]
     create_game_window()
@@ -102,7 +100,7 @@ def initialize_game():
 
 
 def create_game_window():
-    """Create the Toplevel game window and draw the grid. Fill d and d1 maps."""
+    """Create the TKinter game window and draw the grid. Fill d and d1 maps."""
     global win_game, game_canvas, d, d1, label_player1_count, label_player2_count, label_status
 
     win_game = Tk()
@@ -192,10 +190,7 @@ def clear_move_buttons():
     """Destroy any currently placed move buttons."""
     global d2
     for btn in list(d2.values()):
-        try:
-            btn.destroy()
-        except:
-            pass
+        btn.destroy()
     d2.clear()
 
 
@@ -225,10 +220,9 @@ def on_move(pos):
     """
     global state, colour
     x, y = pos
-    # Apply move: game_logic.moves mutates state in-place and returns it
     state = moves(state, colour, x, y)
-    writesave(state, colour)  # save to file
-    colour = 3 - colour  # switch player
+    writesave(state, colour)
+    colour = 3 - colour
     draw_full_board()
     update_counts()
     next_turn()

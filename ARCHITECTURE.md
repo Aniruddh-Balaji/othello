@@ -77,5 +77,21 @@ Here, I'll go over the functions in each module(file).
 - `count(state)`: This takes in the `state` of the system and returns the number of white and black
   pieces in the board currently as a 2-element list.
 
-# TODO
-Complete the documentation for `ui.py`.
+### `cli.py`
+This has no functions, and is just the looping required with inputs and it prints the corresponding material.
+
+### `gui.py`
+- `welcome_screen()`: Create root window with a Begin button. This is just the initial _welcome_ screen.
+- `open_names_window()`: Removes the previous _welcome_ screen and makes another window that
+  inputs the players' names. This contains an inner function `start_game()` in order to use that in
+  the `Button()`.
+- `initialize_game()`: Sets up the board from the `save.txt` file.
+- `create_game_window()`: Places all the labels and the board grid.
+- `draw_full_board()`: Draw coins according to the global `state` value.
+- `put_coin(i, j, r)`: Place a coin at the cell `(i, j)` with color `r`(Black is `1` and White is `2`).
+- `update_counts()`: Gets the count of the black and white pieces from `count(state)` in `game_logic.py` and
+  displays it using labels on the screen.
+- `clear_move_buttons()`: Destroy the all buttons placed after any move is made.
+- `place_buttons(moves_set)`: Places buttons in the necessary locations.
+- `on_move(pos)`: Updates the move using functions from `game_logic.py`.
+- `next_turn()`: Uses the above functions to find the legal moves, place buttons, handle inputs and so on.
