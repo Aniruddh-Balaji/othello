@@ -1,210 +1,276 @@
-# Covers the GUI using TKinter
-
-
 from tkinter import *
+from game_logic import *
+from board import *
 
-# Number of Black pieces, white pieces, `r` is the current color in play
-nb, nw= 2, 2
-r=1
-# A mapping from the simplified coordinates to the actual coordinates of the center points of each cell.
-# Eg: (0, 0): (273.5, 109.2) - Not exact values
+root = None
+win_names = None
+win_game = None
+game_canvas = None
 d = {}
-# A mapping from the simplified coordinates to the actual coordinates of the diagonal points of each cell.
 d1 = {}
-# A mapping relating the Buttons and the cells.
 d2 = {}
+
+player1 = "PLAYER1"
+player2 = "PLAYER2"
+nb = 2
+nw = 2
+
+state = None
+colour = 1
+label_player1_count = None
+label_player2_count = None
+label_status = None
 
 
 def welcome_screen():
-    """
-    Creates the initial welcome screen
-    """
-    global welcome_window
-    welcome_window = Tk(className="Othello")
-    welcome_canvas = Canvas(welcome_window, bg="teal", width=6000, height=6000)
-    welcome_window.geometry("800x500")
-    welcome_canvas.place(x=0,y=0)
-    welcome_label = Label(
-        welcome_window,
-        fg="lightpink",
-        font=("Comic Sans", 40, "bold"),
-        width=40,
-        height=3,
-        bg="teal",
-        text="WELCOME TO OTHELLO!!!",padx=0,pady=0
-    )
-    welcome_label.pack()
-    start_button = Button(
-        welcome_window,
-        bg="pink",
-        text="Begin",
-        fg="teal",
-        width=40,
-        height=5,
-        command=lambda: change_windows(welcome_window),
-        font=300,padx=0,pady=0
-    )
-    start_button.pack()
-    welcome_window.mainloop()
-def win_player_names():
-    """
-    Creates a second window to take input from user about the player's names.
-    """
-    global player1_name, player2_name
-    win_player_names = Tk(className="Enter your names.")
-    win_player_names.geometry("400x300")
-    win_names_canvas = Canvas(win_player_names, bg="teal", width=15000, height=15000)
-    win_names_canvas.place(x=0, y=0)
-    player1_ask = Label(
-        win_player_names, text="Player1", fg="black", bg="pink", font="bold", width=10
-        ,padx=1,pady=1
-    )
-    player2_ask = Label(
-        win_player_names, text="Player2", fg="black", bg="pink", font="bold", width=10
-        ,padx=1,pady=1
-    )
-    player1_name = Entry(win_player_names, width=30)
-    player2_name = Entry(win_player_names, width=30)
-    player1_ask.grid(row=0,column=0)
-    player1_name.grid(row=0,column=1)
-    player2_ask.grid(row=1,column=0)
-    player2_name.grid(row=1,column=1)
-    start_button = Button(
-        win_player_names,
-        bg="pink",
-        text="StartGame",
-        fg="teal",
-        width=30,
-        height=5,
-        command=lambda: get_player_names(win_player_names),
-        font=40,padx=0,pady=0
-    )
-    start_button.place(y=100)
-    win_player_names.mainloop()
+    """Create root window with a Begin button."""
+    global root
+    root = Tk()
+    root.title("Othello - Welcome")
+    root.geometry("720x240")
+    root.configure(bg="teal")
 
-def create_board():
-    """
-    Creates the board
-    """
-    global valid_moves
-    global d, d1
-    global game_canvas
-    global win_game
-    global player1, player2
-    win_game = Tk(className="Othello")
-    win_game.geometry("420x550")
-    game_canvas = Canvas(win_game, width=4000, height=6000, bg="teal")
+    Label(
+        root,
+        text="WELCOME TO OTHELLO!!!",
+        fg="lightpink",
+        bg="teal",
+        font=("Comic Sans MS", 28, "bold"),
+    ).pack(pady=10)
+
+    Button(
+        root,
+        text="Begin",
+        bg="pink",
+        fg="teal",
+        width=24,
+        height=3,
+        command=open_names_window,
+    ).pack(pady=10)
+
+
+def open_names_window():
+    """Open the Toplevel to enter player names. Destroy welcome root."""
+    global root, win_names
+    if root:
+        root.destroy()
+        root = None
+
+    win_names = Tk()
+    win_names.title("Enter your names")
+    win_names.geometry("420x180")
+    win_names.configure(bg="teal")
+
+    Label(win_names, text="Player 1:", bg="teal", fg="black").grid(
+        row=0, column=0, padx=8, pady=8
+    )
+    Label(win_names, text="Player 2:", bg="teal", fg="black").grid(
+        row=1, column=0, padx=8, pady=8
+    )
+
+    entry_p1 = Entry(win_names, width=30)
+    entry_p2 = Entry(win_names, width=30)
+    entry_p1.grid(row=0, column=1, padx=8, pady=8)
+    entry_p2.grid(row=1, column=1, padx=8, pady=8)
+
+    def start_game():
+        p1 = entry_p1.get().strip()
+        p2 = entry_p2.get().strip()
+        global player1, player2
+        player1 = p1 if p1 else "PLAYER1"
+        player2 = p2 if p2 else "PLAYER2"
+        win_names.destroy()
+        initialize_game()
+
+    Button(win_names, text="Start Game", bg="pink", fg="teal", command=start_game).grid(
+        row=2, column=0, columnspan=2, pady=10
+    )
+
+
+def initialize_game():
+    """Prepare game state from save, create board and show starting position."""
+    global state, colour, win_game
+
+    resetsave()
+
+    r = readsave()
+    state = r[1:9]
+    create_game_window()
+    draw_full_board()
+    update_counts()
+    next_turn()
+
+
+def create_game_window():
+    """Create the Toplevel game window and draw the grid. Fill d and d1 maps."""
+    global win_game, game_canvas, d, d1, label_player1_count, label_player2_count, label_status
+
+    win_game = Tk()
+    win_game.title("Othello")
+    win_game.geometry("420x600")
+    win_game.configure(bg="teal")
+    game_canvas = Canvas(win_game, width=420, height=520, bg="teal")
     game_canvas.place(x=0, y=0)
+    d.clear()
+    d1.clear()
     for i in range(64):
         h = i % 8
         w = i // 8
+        x1 = 10 + 50 * h
+        y1 = 40 + 50 * w
+        x2 = 10 + 50 * (h + 1)
+        y2 = 40 + 50 * (w + 1)
         game_canvas.create_rectangle(
-            10+50 * h,
-            100+50 * w,
-            10+50 * (h + 1),
-            100+50 * (w + 1),
-            fill="darkgreen",
-            outline="black",
-            width=2
+            x1, y1, x2, y2, fill="darkgreen", outline="black", width=2
         )
-        d1[(w,h)] = (35 + 50 * h,125+50 * w)
-        d[(w,h)] = (10+50 * h, 100 + 50 * w, 10+50 *(h + 1), 100 + 50 * (w + 1))
-    welcome_disp = Label(
-        win_game, text="Welcome To Othello!!!", bg="lightpink", fg="black", font="bold"
-        ,padx=0,pady=0
+        d[(w, h)] = (x1, y1, x2, y2)
+        d1[(w, h)] = ((x1 + x2) // 2, (y1 + y2) // 2)
+    Label(win_game, text="Welcome To Othello!!!", bg="lightpink", fg="black").place(
+        x=10, y=470
     )
-    welcome_disp.pack()
-    nb_pieces = Label(win_game, text=player1+":: " + str(nb))
-    nw_pieces = Label(win_game, text=player2+":: " + str(nw))
-    nb_pieces.pack()
-    nw_pieces.pack()
-    """undo = Button(win_game, text="undo", fg="pink", bg="teal")
-    undo.place(x=1, y=1)"""
+
+    label_player1_count = Label(
+        win_game, text=f"{player1} :: {nb}", bg="teal", fg="black"
+    )
+    label_player1_count.place(x=10, y=500)
+    label_player2_count = Label(
+        win_game, text=f"{player2} :: {nw}", bg="teal", fg="black"
+    )
+    label_player2_count.place(x=200, y=500)
+
+    label_status = Label(
+        win_game, text="", bg="teal", fg="white", font=("Arial", 10, "bold")
+    )
+    label_status.place(x=10, y=525)
 
 
-def starting_pos():
-    """
-    Sets up the initial position of the board.
-    """
-    global d
-    global d1
-    global valid_moves
-    valid_moves = {(2, 3), (3, 2), (4, 5), (5, 4)}
-    create_board()
-    put_coin(3,3, 2, d)
-    put_coin(3, 4, 1, d)
-    put_coin(4, 4, 2, d)
-    put_coin(4, 3, 1, d)
-    place_buttons(valid_moves, d1)
-
-
-def put_coin(i, j, r, d):
-    """
-    Puts the coin with color `r` at location `(i, j)`.
-    """
+def draw_full_board():
+    """Clear coins and draw coins according to global 'state'."""
     global game_canvas
-    global win_game
-    x = d[(i, j)][0]
-    y = d[(i, j)][1]
-    z = d[(i, j)][2]
-    a = d[(i, j)][3]
+    if game_canvas is None:
+        return
+    game_canvas.delete("all")
+    for (w, h), (x1, y1, x2, y2) in d.items():
+        game_canvas.create_rectangle(
+            x1, y1, x2, y2, fill="darkgreen", outline="black", width=2
+        )
+    if state is None:
+        return
+    for i in range(8):
+        for j in range(8):
+            val = state[i][j]
+            if val != 0:
+                put_coin(i, j, val)
+
+
+def put_coin(i, j, r):
+    """Put a coin at board cell (i,j) with color r (1=black,2=white)."""
+    global game_canvas, d
+    x1, y1, x2, y2 = d[(i, j)]
     if r == 2:
         game_canvas.create_oval(
-            x + 4, y + 4, z - 4, a - 4, fill="white", outline="black", width=4
+            x1 + 4, y1 + 4, x2 - 4, y2 - 4, fill="white", outline="black", width=4
         )
     elif r == 1:
         game_canvas.create_oval(
-            x + 4, y + 4, z - 4, a - 4, fill="black", outline="white", width=2
+            x1 + 4, y1 + 4, x2 - 4, y2 - 4, fill="black", outline="white", width=2
         )
 
 
-def place_buttons(s, d1):
-    """
-    Goes through the set `s` of valid moves and places clickable buttons at those places.
-    """
+def update_counts():
+    """Update the piece count labels using game_logic.count()."""
+    global label_player1_count, label_player2_count, nb, nw, player1, player2
+    c = count(state)
+    nb, nw = c[0], c[1]
+    if label_player1_count:
+        label_player1_count.config(text=f"{player1} :: {nb}")
+    if label_player2_count:
+        label_player2_count.config(text=f"{player2} :: {nw}")
+
+
+def clear_move_buttons():
+    """Destroy any currently placed move buttons."""
     global d2
-    global win_game
-    global i
-    for i in s:
-        d2[i] = Button(
+    for btn in list(d2.values()):
+        try:
+            btn.destroy()
+        except:
+            pass
+    d2.clear()
+
+
+def place_buttons(moves_set):
+    """
+    Place buttons on current valid moves (moves_set is a set of (i,j) tuples).
+    The callbacks call on_move((i,j)).
+    """
+    global d1, d2, win_game
+    clear_move_buttons()
+    for pos in moves_set:
+        cx, cy = d1[pos]
+        b = Button(
             win_game,
             width=5,
             height=2,
             bg="lightgreen",
-            command=lambda ci=i, rr=r: destroy_buttons(ci, rr),
+            command=lambda p=pos: on_move(p),
         )
-        d2[i].place(x=d1[i][0] - 20, y=d1[i][1] - 20)
-
-def destroy_buttons(x,r):
-    """
-    Destroys all buttons when a button is chosen
-    """
-    # TODO
-    for j in d2:
-        d2[j].destroy()
-def f():
-    return i
-def get_player_names(win1):
-    """
-    Gets the player's names. If not inputted, set defaults.
-    Also destroys `win1` and opens `win2`
-    """
-    global player1, player2
-    player1 = player1_name.get()
-    player2 = player2_name.get()
-    if player1 == "":
-        player1 = "PLAYER1"
-    if player2 == "":
-        player2 = "PLAYER2"
-    win1.destroy()
+        # place so button center roughly overlaps cell center
+        b.place(x=cx - 20, y=cy - 20)
+        d2[pos] = b
 
 
-def change_windows(win1):
+def on_move(pos):
     """
-    Destroys `win1` and calls `win2`
+    Callback when a valid-move button is clicked.
+    Apply move, save, switch colour, redraw and continue game.
     """
-    win1.destroy()
-def make_board(l):
-    for i in range(8):
-        for j in range(8):
-            put_coin(i,j,l[i][j],d)
+    global state, colour
+    x, y = pos
+    # Apply move: game_logic.moves mutates state in-place and returns it
+    state = moves(state, colour, x, y)
+    writesave(state, colour)  # save to file
+    colour = 3 - colour  # switch player
+    draw_full_board()
+    update_counts()
+    next_turn()
+
+
+def next_turn():
+    """
+    Compute next legal moves and place buttons.
+    Handle passes and game end.
+    """
+    global state, colour, label_status
+
+    m = listmoves(state, colour)
+    if len(m) == 0:
+        other = 3 - colour
+        m2 = listmoves(state, other)
+        if len(m2) == 0:
+            clear_move_buttons()
+            update_counts()
+            if nb > nw:
+                result = f"{player1} wins! {nb} : {nw}"
+            elif nw > nb:
+                result = f"{player2} wins! {nw} : {nb}"
+            else:
+                result = f"Draw! {nb} : {nw}"
+            if label_status:
+                label_status.config(text=result)
+            return
+        else:
+
+            if label_status:
+                label_status.config(text=f"Player {colour} has no moves and must pass.")
+            colour = other
+            place_buttons(m2)
+            return
+    if label_status:
+        label_status.config(text=f"{player1 if colour==1 else player2}'s turn.")
+    place_buttons(m)
+
+
+if __name__ == "__main__":
+    welcome_screen()
+    mainloop()
