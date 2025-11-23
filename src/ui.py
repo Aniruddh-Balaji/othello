@@ -210,13 +210,11 @@ def place_buttons(moves_set):
         cx, cy = d1[pos]
         b = Button(
             win_game,
-            width=5,
-            height=2,
             bg="lightgreen",
             command=lambda p=pos: on_move(p),
         )
         # place so button center roughly overlaps cell center
-        b.place(x=cx - 20, y=cy - 20)
+        b.place(x=cx - 23, y=cy - 23, width=45, height=45)
         d2[pos] = b
 
 
@@ -271,6 +269,5 @@ def next_turn():
     place_buttons(m)
 
 
-if __name__ == "__main__":
-    welcome_screen()
-    mainloop()
+welcome_screen()
+mainloop()
