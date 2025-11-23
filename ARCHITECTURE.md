@@ -15,10 +15,10 @@ The filesystem is split as:
 ├── README.md
 └── src
     ├── board.py
+    ├── cli.py
     ├── game_logic.py
-    ├── main.py
-    ├── save.txt
-    └── ui.py
+    ├── gui.py
+    └── save.txt
 
 ```
 (This is the output of `tree .` from the root of this project.)
