@@ -49,6 +49,8 @@ The five members of the team are:
 - @roomroofroot
 - @kajuburfi
 - @aniruddh-balaji
+- @the-deepak-nayak
+- @devbrat-singh64
 
 # License
 The license for this program is a _slightly_ modified [MIT license](./LICENSE)
