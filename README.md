@@ -43,6 +43,8 @@ For CLI,
 You get a nice printed board, with options to choose the next move as coordinates.
 You should type out the coordinates and the game shall continue.
 
+# Architecture
+The architecture of the code is neatly mentioned [here](./ARCHITECTURE.md).
 
 # Credits
 The five members of the team are:

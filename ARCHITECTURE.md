@@ -1,6 +1,9 @@
 # Architecture of the program
 This file contains the architecture of the program, which is everything anyone has to know in order to contribute(or to just understand the codebase entirely).
 
+We have used a formatter [`black`](https://github.com/psf/black) for a standardized look
+for our code.
+
 We have taken an entirely function-based approach to this project; we don't use OOPs.
 
 The filesystem is split as:
