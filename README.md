@@ -48,10 +48,10 @@ The architecture of the code is neatly mentioned [here](./ARCHITECTURE.md).
 
 # Credits
 The five members of the team are:
-- @roomroofroot
-- @kajuburfi
-- @aniruddh-balaji
-- @the-deepak-nayak
+- [@roomroofroot](https://github.com/roomroofroot)
+- [@kajuburfi](https://github.com/kajuburfi)
+- [@aniruddh-balaji](https://github.com/Aniruddh-Balaji)
+- [@the-deepak-nayak](https://github.com/the-deepak-nayak)
 - @devbrat-singh64
 
 # License
