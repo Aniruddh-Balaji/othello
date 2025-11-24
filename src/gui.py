@@ -1,3 +1,6 @@
+#This program is used to generate the user interface for playing the game
+#We have made the interface using TKinter for the game
+
 from tkinter import *
 from game_logic import *
 from board import *
