@@ -52,7 +52,7 @@ The five members of the team are:
 - [@kajuburfi](https://github.com/kajuburfi)
 - [@aniruddh-balaji](https://github.com/Aniruddh-Balaji)
 - [@the-deepak-nayak](https://github.com/the-deepak-nayak)
-- @devbrat-singh64
+- [@devbrat-singh64](https://github.com/devbrat-singh64)
 
 # License
 The license for this program is a _slightly_ modified [MIT license](./LICENSE)
