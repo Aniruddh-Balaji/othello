@@ -92,7 +92,15 @@ def initialize_game():
     global state, colour, win_game
 
     r = readsave()
-    state = r[1:9]
+    state = r[1:10]
+    colour = r[0]
+
+    if sum(count(state)) == 64:
+        resetsave()
+        r = readsave()
+        state = r[1:10]
+        colour = r[0]
+
     create_game_window()
     draw_full_board()
     update_counts()
@@ -221,8 +229,8 @@ def on_move(pos):
     global state, colour
     x, y = pos
     state = moves(state, colour, x, y)
-    writesave(state, colour)
     colour = 3 - colour
+    writesave(state, colour)
     draw_full_board()
     update_counts()
     next_turn()
@@ -235,6 +243,8 @@ def next_turn():
     """
     global state, colour, label_status
 
+    state = readsave()[1:10]
+    colour = readsave()[0]
     m = listmoves(state, colour)
     if len(m) == 0:
         other = 3 - colour
