@@ -24,8 +24,7 @@ The rules of the board game Othello are concisely explained [here](https://www.w
 Running the program:
 ```sh
 $ cd othello/src
-$ python3 gui.py # For the graphical approach(TKinter)
-$ python3 cli.py # For the command line approach
+$ python3 main.py
 ```
 
 For GUI, 
